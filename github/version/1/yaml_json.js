@@ -10,6 +10,7 @@ const token = process.env.DIGIA_TOKEN;
 
 let projectId;
 let branchName = args[0];
+console.log(branchName)
 
 
 
