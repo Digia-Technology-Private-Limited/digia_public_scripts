@@ -26,5 +26,5 @@ branchName=$1
 node scripts/yaml_json.js "$branchName" 
 
 # Cleanup
-chmod -R 777 node_modules package.json package-lock.json scripts/yaml_json.js
-rm -rf node_modules package.json package-lock.json scripts/yaml_json.js
+chmod -R 777 node_modules package.json package-lock.json scripts/yaml_json.js merge_changes.sh
+rm -rf node_modules package.json package-lock.json scripts/yaml_json.js merge_changes.sh
