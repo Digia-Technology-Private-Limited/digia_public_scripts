@@ -42,16 +42,6 @@ async function collectDataFromYamlFiles(folderPath, folderName) {
             projectId = jsonData.projectId
           }
 
-          if (folderName === "functions") {
-            const jsFilePath = filePath.replace('.yaml', '.js');
-          
-            if (fs.existsSync(jsFilePath)) {
-              jsonData.functionRawString = fs.readFileSync(jsFilePath, 'utf8');
-            } else {
-              jsonData.functionRawString = ""; 
-            }
-          }
-
           dataCollection.push(jsonData);
         }
       } catch (error) {
