@@ -4,16 +4,13 @@ const yaml = require('js-yaml');
 const path = require('path');
 const { json } = require('stream/consumers');
 
-console.log(process.env.BASE_URL)
+
 const BASE_URL = process.env.BASE_URL;
 const args = process.argv.slice(2); 
 const token = process.env.DIGIA_TOKEN;
 
 let projectId;
 let branchName = args[0];
-console.log(branchName)
-
-
 
 async function collectDataFromYamlFiles(folderPath, folderName) {
   const dataCollection = [];
@@ -64,6 +61,7 @@ async function collectAllData() {
     { folderPath: path.join(__dirname, '..', 'components'), folderName: 'components' },
     { folderPath: path.join(__dirname, '..', 'design','font-tokens'), folderName: 'typoGraphy' },
     { folderPath: path.join(__dirname, '..', 'design','color-tokens'), folderName: 'themeData' },
+    { folderPath: path.join(__dirname, '..', 'design','app-settings'), folderName: 'appSettings' },
     { folderPath: path.join(__dirname, '..', 'functions'), folderName: 'functions' },
   ];
 

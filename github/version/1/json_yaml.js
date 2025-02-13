@@ -104,6 +104,9 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
     if (parentFolderName === 'design' && data.THEME) {
       folderName = 'color-tokens';
     }
+    if (parentFolderName === 'design' && data.APP_SETTINGS) {
+      folderName = 'app-settings';
+    }
     if (parentFolderName === 'project' && data.appDetails?.displayName) {
       folderName = "project-details";
     }
@@ -135,7 +138,7 @@ async function fetchAllData() {
     }
 
 
-    const { datasources, components, functions, pages, project, typoGraphy, themeData, envs } = response.data.data.response;
+    const { datasources, components, functions, pages, project, typoGraphy, themeData,appSettings, envs } = response.data.data.response;
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
     processAndSaveData('components', '', components);
@@ -144,6 +147,7 @@ async function fetchAllData() {
     processAndSaveData('project', '', project);
     processAndSaveData('design', 'font-tokens', typoGraphy);
     processAndSaveData('design', 'color-tokens', themeData);
+    processAndSaveData('design', 'app-settings', appSettings);
 
     console.log(`Data for project ID ${projectId} has been fetched and saved.`);
   } catch (error) {
