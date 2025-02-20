@@ -43,6 +43,7 @@ async function collectDataFromYamlFiles(folderPath, folderName) {
         }
       } catch (error) {
         console.error(`Error processing file ${filePath}: ${error.message}`);
+        process.exit(1)
       }
     }
   };
@@ -89,7 +90,9 @@ async function updateAllDataToBackend() {
       }
     );
   } catch (error) {
+ 
     console.error(`Error updating data to backend: ${error.message}`);
+    process.exit(1)
   }
 }
 

@@ -1,31 +1,46 @@
 #!/bin/bash
 
-# Verify Node.js installation
+set -e  
+
+
+echo "🔍 Checking Node.js and npm versions..."
 node -v
 npm -v
 
-# Initialize Node.js project and install dependencies
-echo "Initializing Node.js project and installing dependencies..."
+echo "📦 Initializing Node.js project and installing dependencies..."
 npm init -y
 npm install axios js-yaml
 
-echo "Node.js and dependencies installed successfully."
+echo "✅ Node.js and dependencies installed successfully."
 
-# Ensure the scripts directory exists
+
 [ -d scripts ] || mkdir scripts
 
-# Fetch the correct version file from S3
-VERSION=$4
-curl -o scripts/json_yaml.js "https://raw.githubusercontent.com/Digia-Technology-Private-Limited/digia_public_scripts/refs/heads/main/github/version/$VERSION/json_yaml.js"
-chmod +x scripts/json_yaml.js
+branchName=$1
+VERSION=$2
 
-# Run the script with provided arguments
-projectId=$1
-branchId=$2
-branch=$3
+SCRIPT_URL="https://raw.githubusercontent.com/Digia-Technology-Private-Limited/digia_public_scripts/refs/heads/main/github/version/$VERSION/yaml_json.js"
+TARGET_FILE="scripts/yaml_json.js"
 
-node scripts/json_yaml.js "$projectId" "$branchId" "$branch"
 
-# Cleanup
-chmod -R 777 node_modules package.json package-lock.json scripts/json_yaml.js commit_changes.sh
-rm -rf node_modules package.json package-lock.json scripts/json_yaml.js commit_changes.sh
+echo "⬇️ Downloading script from $SCRIPT_URL..."
+if ! curl -f -o "$TARGET_FILE" "$SCRIPT_URL"; then
+  echo "❌ Error: Failed to download yaml_json.js script."
+  exit 1
+fi
+
+chmod +x "$TARGET_FILE"
+
+
+echo "🚀 Running Node.js script: $TARGET_FILE with branchName: $branchName..."
+if ! node "$TARGET_FILE" "$branchName"; then
+  echo "❌ Error: Node.js script execution failed."
+  exit 1
+fi
+
+
+echo "🧹 Cleaning up temporary files..."
+chmod -R 777 node_modules package.json package-lock.json "$TARGET_FILE" merge_changes.sh || true
+rm -rf node_modules package.json package-lock.json "$TARGET_FILE" merge_changes.sh || true
+
+echo "✅ Script execution completed successfully."
