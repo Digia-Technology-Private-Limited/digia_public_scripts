@@ -98,13 +98,13 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
   } else {
     const yamlData = yaml.dump(data,{ sortKeys: false });
 
-    if (parentFolderName === 'design' && data.TYPOGRAPHY) {
+    if (parentFolderName === 'artbook' && data.TYPOGRAPHY) {
       folderName = 'font-tokens';
     }
-    if (parentFolderName === 'design' && data.THEME) {
+    if (parentFolderName === 'artbook' && data.THEME) {
       folderName = 'color-tokens';
     }
-    if (parentFolderName === 'design' && data.APP_SETTINGS) {
+    if (parentFolderName === 'artbook' && data.APP_SETTINGS) {
       folderName = 'app-settings';
     }
     if (parentFolderName === 'project' && data.appDetails?.displayName) {
@@ -118,7 +118,7 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
 }
 
 async function fetchAllData() {
-  deleteFolders(['datasources', 'components', 'design', 'functions', 'pages', 'project']);
+  deleteFolders(['datasources', 'components', 'artbook', 'functions', 'pages', 'project']);
 
   try {
     const response = await axios.post(
@@ -145,9 +145,9 @@ async function fetchAllData() {
     processAndSaveData('functions', '', functions);
     processAndSaveData('pages', '', pages);
     processAndSaveData('project', '', project);
-    processAndSaveData('design', 'font-tokens', typoGraphy);
-    processAndSaveData('design', 'color-tokens', themeData);
-    processAndSaveData('design', 'app-settings', appSettings);
+    processAndSaveData('artboook', 'font-tokens', typoGraphy);
+    processAndSaveData('artbook', 'color-tokens', themeData);
+    processAndSaveData('artbook', 'app-settings', appSettings);
 
     console.log(`Data for project ID ${projectId} has been fetched and saved.`);
   } catch (error) {
