@@ -24,7 +24,10 @@ branchName=$1
 
 
 node scripts/yaml_json.js "$branchName" 
+exit_code=$?
 
 # Cleanup
 chmod -R 777 node_modules package.json package-lock.json scripts/yaml_json.js merge_changes.sh
 rm -rf node_modules package.json package-lock.json scripts/yaml_json.js merge_changes.sh
+
+exit $exit_code
