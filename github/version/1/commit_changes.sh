@@ -25,7 +25,10 @@ branchId=$2
 branch=$3
 
 node scripts/json_yaml.js "$projectId" "$branchId" "$branch"
+exit_code=$?
 
 # Cleanup
 chmod -R 777 node_modules package.json package-lock.json scripts/json_yaml.js commit_changes.sh
 rm -rf node_modules package.json package-lock.json scripts/json_yaml.js commit_changes.sh
+
+exit $exit_code
