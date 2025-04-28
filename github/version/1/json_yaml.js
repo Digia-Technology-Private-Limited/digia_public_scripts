@@ -152,7 +152,10 @@ async function fetchAllData() {
     processAndSaveData('design', 'font-tokens', typoGraphy);
     processAndSaveData('design', 'color-tokens', themeData);
     processAndSaveData('design', 'app-settings', appSettings);
+    if(appState)
+    {
     processAndSaveData('design', 'app-state', appState);
+    }
 
     console.log(`Data for project ID ${projectId} has been fetched and saved.`);
   } catch (error) {
