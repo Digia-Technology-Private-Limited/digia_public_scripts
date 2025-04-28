@@ -16,8 +16,8 @@ const token = process.env.DIGIA_TOKEN;
 
 
 
-// const projectId = "67a8f686acd58e18462ab068"
-// const branchId = "67a8f686acd58e18462ab06a"
+// const projectId = "6809d480fb9bd94615ce6fab"
+// const branchId = "6809d481fb9bd94615ce6fad"
 // const token = "?wubr>hlenr^e(`@7_%/qO>>A~EmGs12b4af7b31e305f84eb454b2946086c08012a8e45c49a63855fc7ca9a0976a0b"
 // Validate projectId
 
@@ -142,7 +142,7 @@ async function fetchAllData() {
     }
 
 
-    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, appSettings, envs } = response.data.data.response;
+    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState,appAssets, appSettings, envs } = response.data.data.response;
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
     processAndSaveData('components', '', components);
@@ -152,6 +152,10 @@ async function fetchAllData() {
     processAndSaveData('design', 'font-tokens', typoGraphy);
     processAndSaveData('design', 'color-tokens', themeData);
     processAndSaveData('design', 'app-settings', appSettings);
+    if(appAssets)
+    {
+    processAndSaveData('design', 'app-assets', appAssets);
+    }
     if(appState)
     {
     processAndSaveData('design', 'app-state', appState);
