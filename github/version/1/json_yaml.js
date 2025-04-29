@@ -16,8 +16,8 @@ const token = process.env.DIGIA_TOKEN;
 
 
 
-// const projectId = "6809d480fb9bd94615ce6fab"
-// const branchId = "6809d481fb9bd94615ce6fad"
+// const projectId = "680241013f78d3967a6870b3"
+// const branchId = "680241013f78d3967a6870b5"
 // const token = "?wubr>hlenr^e(`@7_%/qO>>A~EmGs12b4af7b31e305f84eb454b2946086c08012a8e45c49a63855fc7ca9a0976a0b"
 // Validate projectId
 
@@ -72,11 +72,13 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
   } else {
     data = removeIds(data, true); 
   }
+  
 
 
   if (Array.isArray(data)) {
     data.forEach((item) => {
       const yamlData = yaml.dump(item,{ sortKeys: false });
+      
       let currentFileName = fileName;
       
       if (item.name) currentFileName = item.name;
@@ -86,6 +88,11 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
       if(folderName =="environment")
       {
         currentFileName= item.kind
+      }
+      if(folderName == "app-assets")
+      {
+        
+        currentFileName = item.assetData.localPath;
       }
 
       const yamlFilePath = path.join(dirPath, `${currentFileName}.yaml`);
@@ -110,6 +117,10 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
     if(parentFolderName==="design" && data.APP_STATE)
     {
       folderName = 'app-state';
+    }
+    if(parentFolderName==="design" && data.APP_ASSETS)
+    {
+      folderName = 'app-assets';
     }
     if (parentFolderName === 'project' && data.appDetails?.displayName) {
       folderName = "project-details";
@@ -142,7 +153,7 @@ async function fetchAllData() {
     }
 
 
-    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState,appAssets, appSettings, envs } = response.data.data.response;
+    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState,filteredAppAsset, appSettings, envs } = response.data.data.response;
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
     processAndSaveData('components', '', components);
@@ -152,9 +163,9 @@ async function fetchAllData() {
     processAndSaveData('design', 'font-tokens', typoGraphy);
     processAndSaveData('design', 'color-tokens', themeData);
     processAndSaveData('design', 'app-settings', appSettings);
-    if(appAssets)
+    if(filteredAppAsset)
     {
-    processAndSaveData('design', 'app-assets', appAssets);
+    processAndSaveData('design', 'app-assets', filteredAppAsset);
     }
     if(appState)
     {
