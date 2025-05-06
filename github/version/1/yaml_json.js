@@ -12,6 +12,52 @@ const token = process.env.DIGIA_TOKEN;
 let projectId;
 let branchName = args[0];
 
+function readYamlFile(filePath) {
+  try {
+    const content = fs.readFileSync(filePath, 'utf8');
+    return yaml.load(content);
+  } catch (error) {
+    console.error(`Failed to parse YAML file ${filePath}: ${error.message}`);
+    process.exit(1);
+  }
+}
+async function collectDataFromPages(pagesPath) {
+  const pages = [];
+
+  const pageFolders = fs.readdirSync(pagesPath);
+  for (const folder of pageFolders) {
+    const pageFolderPath = path.join(pagesPath, folder);
+    if (!fs.lstatSync(pageFolderPath).isDirectory()) continue;
+
+    const page = {};
+    const files = fs.readdirSync(pageFolderPath);
+
+    // Read main page YAML file (same as folder name)
+    const mainYamlFile = path.join(pageFolderPath, `${folder}.yaml`);
+    if (fs.existsSync(mainYamlFile)) {
+      Object.assign(page, readYamlFile(mainYamlFile));
+    }
+
+    // Read nodes if present
+    const nodesPath = path.join(pageFolderPath, 'nodes');
+    if (fs.existsSync(nodesPath) && fs.lstatSync(nodesPath).isDirectory()) {
+      const nodeFiles = fs.readdirSync(nodesPath);
+      page.layout = page.layout || {};
+      page.layout.nodes = {};
+
+      for (const nodeFile of nodeFiles) {
+        const nodeId = nodeFile.split("_").slice(-1)[0].replace('.yaml', '');
+        const nodeData = readYamlFile(path.join(nodesPath, nodeFile));
+        page.layout.nodes[nodeId] = nodeData;
+      }
+    }
+
+    pages.push(page);
+  }
+
+  return pages;
+}
+
 async function collectDataFromYamlFiles(folderPath, folderName) {
   const dataCollection = [];
 
@@ -58,7 +104,6 @@ async function collectAllData() {
     { folderPath: path.join(__dirname, '..', 'project'), folderName: 'project' },
     { folderPath: path.join(__dirname, '..', 'datasources', 'rest'), folderName: 'datasources' },
     { folderPath: path.join(__dirname, '..', 'datasources', 'environment'), folderName: 'environment' },
-    { folderPath: path.join(__dirname, '..', 'pages'), folderName: 'pages' },
     { folderPath: path.join(__dirname, '..', 'components'), folderName: 'components' },
     { folderPath: path.join(__dirname, '..', 'design','font-tokens'), folderName: 'typoGraphy' },
     { folderPath: path.join(__dirname, '..', 'design','color-tokens'), folderName: 'themeData' },
@@ -72,14 +117,20 @@ async function collectAllData() {
   for (const config of folderConfigs) {
     allData[config.folderName] = await collectDataFromYamlFiles(config.folderPath, config.folderName);
   }
+  const pagesPath = path.join(__dirname, '..', 'pages');
+  allData['pages'] = await collectDataFromPages(pagesPath);
+
+ 
 
   return allData;
+
+
 }
 
 async function updateAllDataToBackend() {
   try {
     const allFolderData = await collectAllData();
-    // Update project data
+ 
     const updateResponse = await axios.post(
       `${BASE_URL}/api/v1/project/updateProjectDataForGithub`,
       { data: allFolderData,projectId:projectId,branchName:branchName },

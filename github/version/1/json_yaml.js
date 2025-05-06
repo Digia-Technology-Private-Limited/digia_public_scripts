@@ -5,8 +5,8 @@ const path = require('path');
 const { parseArgs } = require('util');
 
 
-console.log(process.env.BASE_URL)
-const BASE_URL = process.env.BASE_URL;
+// console.log(process.env.BASE_URL)
+const BASE_URL = process.env.BASE_URL ;
 
 const args = process.argv.slice(2);
 const projectId = args[0];
@@ -16,8 +16,8 @@ const token = process.env.DIGIA_TOKEN;
 
 
 
-// const projectId = "67a8f686acd58e18462ab068"
-// const branchId = "67a8f686acd58e18462ab06a"
+// const projectId = "680fd055569dbe87f2e5d6a5"
+// const branchId = "680fd056569dbe87f2e5d6a7"
 // const token = "?wubr>hlenr^e(`@7_%/qO>>A~EmGs12b4af7b31e305f84eb454b2946086c08012a8e45c49a63855fc7ca9a0976a0b"
 // Validate projectId
 
@@ -40,6 +40,21 @@ function removeIds(obj, excludeProjectId = false) {
   return obj;
 }
 
+function removeNulls(obj) {
+  if (Array.isArray(obj)) {
+    return obj.map(removeNulls);
+  } else if (obj !== null && typeof obj === 'object') {
+    const cleaned = {};
+    for (const [key, value] of Object.entries(obj)) {
+      if (value !== null) {
+        cleaned[key] = removeNulls(value);
+      }
+    }
+    return cleaned;
+  }
+  return obj;
+}
+
 function filterObj(item, excludeProjectId) {
   const keysToRemove = ['id', '_id', 'branchId', 'userId','createdAt','updatedAt'];
   if (!excludeProjectId) {
@@ -51,7 +66,35 @@ function filterObj(item, excludeProjectId) {
   );
 }
 
+function processPages(pages) {
+  const pagesDir = path.join(__dirname, '..', 'pages');
+  fs.mkdirSync(pagesDir, { recursive: true });
 
+  pages.forEach((page) => {
+    const pageFolderName = page.displayName || page.slug || page.id;
+    const pageDir = path.join(pagesDir, pageFolderName);
+    const nodesDir = path.join(pageDir, 'nodes');
+
+    fs.mkdirSync(nodesDir, { recursive: true });
+
+    // Extract and write nodes
+    const nodes = page.layout?.nodes || {};
+    Object.entries(nodes).forEach(([nodeId, nodeData]) => {
+      const nodeYaml = yaml.dump(removeNulls(nodeData), { sortKeys: false });
+      const nodeFileName = nodeData.varName +"_" + nodeId;
+      fs.writeFileSync(path.join(nodesDir, `${nodeFileName}.yaml`), nodeYaml);
+    });
+
+    // Remove layout.nodes before saving main page yaml
+    const pageCopy = removeNulls({ ...page });
+    if (pageCopy.layout) delete pageCopy.layout.nodes;
+
+    const pageYaml = yaml.dump(removeIds(pageCopy), { sortKeys: false });
+    fs.writeFileSync(path.join(pageDir, `${pageFolderName}.yaml`), pageYaml);
+
+    console.log(`Created folder and files for page: ${pageFolderName}`);
+  });
+}
 function deleteFolders(folders) {
   folders.forEach((folder) => {
     const dirPath = path.join(__dirname, '..', folder);
@@ -87,6 +130,7 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
       {
         currentFileName= item.kind
       }
+      
 
       const yamlFilePath = path.join(dirPath, `${currentFileName}.yaml`);
       fs.writeFileSync(yamlFilePath, yamlData);
@@ -125,6 +169,7 @@ async function fetchAllData() {
   deleteFolders(['datasources', 'components', 'design', 'functions', 'pages', 'project']);
 
   try {
+    
     const response = await axios.post(
       `${BASE_URL}/api/v1/project/syncProjectDataForGithub`,
       { branchId },
@@ -135,6 +180,7 @@ async function fetchAllData() {
         }
       }
     );
+    
 
     if (!response.data || !response.data.data || !response.data.data.response) {
       console.error('Unexpected response format:', response.data);
@@ -143,11 +189,16 @@ async function fetchAllData() {
 
 
     const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, appSettings, envs } = response.data.data.response;
+    console.log(JSON.stringify(pages, null, 2));
+
+
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
     processAndSaveData('components', '', components);
     processAndSaveData('functions', '', functions);
-    processAndSaveData('pages', '', pages);
+    processPages(removeNulls(pages));
+
+
     processAndSaveData('project', '', project);
     processAndSaveData('design', 'font-tokens', typoGraphy);
     processAndSaveData('design', 'color-tokens', themeData);
@@ -163,6 +214,11 @@ async function fetchAllData() {
     process.exit(1); 
   }
 }
+
+
+
+
+
 
 
 fetchAllData(); 
