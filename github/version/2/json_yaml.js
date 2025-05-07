@@ -5,7 +5,6 @@ const path = require('path');
 const { parseArgs } = require('util');
 
 
-// console.log(process.env.BASE_URL)
 const BASE_URL = process.env.BASE_URL ;
 
 const args = process.argv.slice(2);
@@ -13,13 +12,6 @@ const projectId = args[0];
 const branchId = args[1];
 const token = process.env.DIGIA_TOKEN;
 
-
-
-
-// const projectId = "680fd055569dbe87f2e5d6a5"
-// const branchId = "680fd056569dbe87f2e5d6a7"
-// const token = "?wubr>hlenr^e(`@7_%/qO>>A~EmGs12b4af7b31e305f84eb454b2946086c08012a8e45c49a63855fc7ca9a0976a0b"
-// Validate projectId
 
 if (!projectId) {
   console.error('Please provide a projectId.');
