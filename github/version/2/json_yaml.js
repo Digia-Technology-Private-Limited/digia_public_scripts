@@ -130,6 +130,11 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
       {
         currentFileName= item.kind
       }
+      if(folderName == "app-assets")
+      {
+  
+        currentFileName = item.assetData.localPath;
+      }
       
 
       const yamlFilePath = path.join(dirPath, `${currentFileName}.yaml`);
@@ -155,6 +160,10 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
     {
       folderName = 'app-state';
     }
+    if(parentFolderName==="design" && data.APP_ASSETS)
+      {
+        folderName = 'app-assets';
+      }
     if (parentFolderName === 'project' && data.appDetails?.displayName) {
       folderName = "project-details";
     }
@@ -188,7 +197,7 @@ async function fetchAllData() {
     }
 
 
-    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, appSettings, envs } = response.data.data.response;
+    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs } = response.data.data.response;
     console.log(JSON.stringify(pages, null, 2));
 
 
@@ -207,6 +216,10 @@ async function fetchAllData() {
     {
     processAndSaveData('design', 'app-state', appState);
     }
+    if(filteredAppAsset)
+      {
+      processAndSaveData('design', 'app-assets', filteredAppAsset);
+      }
 
     console.log(`Data for project ID ${projectId} has been fetched and saved.`);
   } catch (error) {

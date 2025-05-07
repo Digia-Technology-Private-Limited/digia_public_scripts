@@ -109,6 +109,7 @@ async function collectAllData() {
     { folderPath: path.join(__dirname, '..', 'design','color-tokens'), folderName: 'themeData' },
     { folderPath: path.join(__dirname, '..', 'design','app-settings'), folderName: 'appSettings' },
     { folderPath: path.join(__dirname, '..', 'design','app-state'), folderName: 'appState' },
+    { folderPath: path.join(__dirname, '..', 'design','app-assets'), folderName: 'appAssets' },
     { folderPath: path.join(__dirname, '..', 'functions'), folderName: 'functions' },
   ];
 
