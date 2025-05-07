@@ -87,6 +87,11 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
       {
         currentFileName= item.kind
       }
+      if(folderName == "app-assets")
+      {
+  
+        currentFileName = item.assetData.localPath;
+      }
 
       const yamlFilePath = path.join(dirPath, `${currentFileName}.yaml`);
       fs.writeFileSync(yamlFilePath, yamlData);
@@ -110,6 +115,10 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
     if(parentFolderName==="design" && data.APP_STATE)
     {
       folderName = 'app-state';
+    }
+    if(parentFolderName==="design" && data.APP_ASSETS)
+    {
+        folderName = 'app-assets';
     }
     if (parentFolderName === 'project' && data.appDetails?.displayName) {
       folderName = "project-details";
@@ -142,7 +151,7 @@ async function fetchAllData() {
     }
 
 
-    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, appSettings, envs } = response.data.data.response;
+    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs } = response.data.data.response;
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
     processAndSaveData('components', '', components);
@@ -152,6 +161,10 @@ async function fetchAllData() {
     processAndSaveData('design', 'font-tokens', typoGraphy);
     processAndSaveData('design', 'color-tokens', themeData);
     processAndSaveData('design', 'app-settings', appSettings);
+    if(filteredAppAsset)
+    {
+    processAndSaveData('design', 'app-assets', filteredAppAsset);
+    }
     if(appState)
     {
     processAndSaveData('design', 'app-state', appState);
