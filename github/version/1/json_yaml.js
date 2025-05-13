@@ -76,7 +76,7 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
 
   if (Array.isArray(data)) {
     data.forEach((item) => {
-      const yamlData = yaml.dump(item,{ sortKeys: false });
+      const yamlData = yaml.dump(item,{ sortKeys: true });
       let currentFileName = fileName;
       
       if (item.name) currentFileName = item.name;
@@ -101,7 +101,7 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
       console.log(`Created: ${yamlFilePath}`);
     });
   } else {
-    const yamlData = yaml.dump(data,{ sortKeys: false });
+    const yamlData = yaml.dump(data,{ sortKeys: true });
 
     if (parentFolderName === 'design' && data.TYPOGRAPHY) {
       folderName = 'font-tokens';
