@@ -5,7 +5,7 @@ const path = require('path');
 const { parseArgs } = require('util');
 
 
-const BASE_URL = process.env.BASE_URL ;
+const BASE_URL = process.env.BASE_URL;
 
 const args = process.argv.slice(2);
 const projectId = args[0];
@@ -72,7 +72,7 @@ function processPages(pages) {
     // Extract and write nodes
     const nodes = page.layout?.nodes || {};
     Object.entries(nodes).forEach(([nodeId, nodeData]) => {
-      const nodeYaml = yaml.dump(removeNulls(nodeData), { sortKeys: false });
+      const nodeYaml = yaml.dump(removeNulls(nodeData), { sortKeys: true });
       const nodeFileName = nodeData.varName +"_" + nodeId;
       fs.writeFileSync(path.join(nodesDir, `${nodeFileName}.yaml`), nodeYaml);
     });
@@ -81,7 +81,7 @@ function processPages(pages) {
     const pageCopy = removeNulls({ ...page });
     if (pageCopy.layout) delete pageCopy.layout.nodes;
 
-    const pageYaml = yaml.dump(removeIds(pageCopy), { sortKeys: false });
+    const pageYaml = yaml.dump(removeIds(pageCopy), { sortKeys: true });
     fs.writeFileSync(path.join(pageDir, `${pageFolderName}.yaml`), pageYaml);
 
     console.log(`Created folder and files for page: ${pageFolderName}`);
@@ -111,7 +111,7 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
 
   if (Array.isArray(data)) {
     data.forEach((item) => {
-      const yamlData = yaml.dump(item,{ sortKeys: false });
+      const yamlData = yaml.dump(item,{ sortKeys: true });
       let currentFileName = fileName;
       
       if (item.name) currentFileName = item.name;
@@ -137,7 +137,7 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
       console.log(`Created: ${yamlFilePath}`);
     });
   } else {
-    const yamlData = yaml.dump(data,{ sortKeys: false });
+    const yamlData = yaml.dump(data,{ sortKeys: true });
 
     if (parentFolderName === 'design' && data.TYPOGRAPHY) {
       folderName = 'font-tokens';
