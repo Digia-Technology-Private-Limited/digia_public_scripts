@@ -131,7 +131,7 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
 }
 
 async function fetchAllData() {
-  deleteFolders(['datasources', 'components', 'design', 'functions', 'pages', 'project']);
+  deleteFolders(['datasources', 'components', 'design', 'functions', 'pages', 'project', 'widgets']);
 
   try {
     const response = await axios.post(
@@ -151,7 +151,7 @@ async function fetchAllData() {
     }
 
 
-    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs } = response.data.data.response;
+    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs, widgets } = response.data.data.response;
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
     processAndSaveData('components', '', components);
@@ -161,6 +161,7 @@ async function fetchAllData() {
     processAndSaveData('design', 'font-tokens', typoGraphy);
     processAndSaveData('design', 'color-tokens', themeData);
     processAndSaveData('design', 'app-settings', appSettings);
+    processAndSaveData('customWidgets', '', widgets);
     if(filteredAppAsset)
     {
     processAndSaveData('design', 'app-assets', filteredAppAsset);
