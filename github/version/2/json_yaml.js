@@ -190,7 +190,6 @@ async function fetchAllData() {
 
 
     const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs, widgets } = response.data.data.response;
-    console.log(JSON.stringify(pages, null, 2));
 
 
     processAndSaveData('datasources', 'rest', datasources);
@@ -204,7 +203,7 @@ async function fetchAllData() {
     processAndSaveData('design', 'font-tokens', typoGraphy);
     processAndSaveData('design', 'color-tokens', themeData);
     processAndSaveData('design', 'app-settings', appSettings);
-    processAndSaveData('customWidgets', '', widgets);
+    processAndSaveData('widgets', '', widgets);
     if(appState)
     {
     processAndSaveData('design', 'app-state', appState);

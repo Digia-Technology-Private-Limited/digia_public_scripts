@@ -111,7 +111,7 @@ async function collectAllData() {
     { folderPath: path.join(__dirname, '..', 'design','app-state'), folderName: 'appState' },
     { folderPath: path.join(__dirname, '..', 'design','app-assets'), folderName: 'appAssets' },
     { folderPath: path.join(__dirname, '..', 'functions'), folderName: 'functions' },
-    { folderPath: path.join(__dirname, '..', 'customWidgets'), folderName: 'customWidgets'},
+    { folderPath: path.join(__dirname, '..', 'widgets'), folderName: 'widgets'},
   ];
 
   const allData = {};
