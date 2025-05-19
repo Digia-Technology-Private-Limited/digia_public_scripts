@@ -5,7 +5,6 @@ const path = require('path');
 const { parseArgs } = require('util');
 
 
-console.log(process.env.BASE_URL)
 const BASE_URL = process.env.BASE_URL;
 
 const args = process.argv.slice(2);
@@ -161,7 +160,7 @@ async function fetchAllData() {
     processAndSaveData('design', 'font-tokens', typoGraphy);
     processAndSaveData('design', 'color-tokens', themeData);
     processAndSaveData('design', 'app-settings', appSettings);
-    processAndSaveData('customWidgets', '', widgets);
+    processAndSaveData('widgets', '', widgets);
     if(filteredAppAsset)
     {
     processAndSaveData('design', 'app-assets', filteredAppAsset);
