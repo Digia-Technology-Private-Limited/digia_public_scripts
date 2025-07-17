@@ -97,6 +97,14 @@ function deleteFolders(folders) {
   });
 }
 
+function sanitizeFileName(originalPath) {
+  const noExt = originalPath.replace(path.extname(originalPath), '');
+  let safeName = noExt.replace(/[\/\\]/g, '-');
+  safeName = safeName.replace(/^[^a-zA-Z0-9]+/, '');
+  safeName = safeName.replace(/[^a-zA-Z0-9-_]/g, '-');
+  return safeName;
+}
+
 function processAndSaveData(parentFolderName, folderName, data, fileName = 'default') {
   const dirPath = path.join(__dirname, '..', parentFolderName, folderName);
   fs.mkdirSync(dirPath, { recursive: true });
@@ -125,7 +133,7 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
       if(folderName == "app-assets")
       {
   
-        currentFileName = item.assetData.localPath;
+        currentFileName = sanitizeFileName(item.assetData.localPath);
       }
       
 
@@ -190,8 +198,6 @@ async function fetchAllData() {
 
 
     const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs } = response.data.data.response;
-    console.log(JSON.stringify(pages, null, 2));
-
 
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
