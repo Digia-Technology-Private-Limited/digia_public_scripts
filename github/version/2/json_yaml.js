@@ -6,9 +6,8 @@ const { parseArgs } = require('util');
 
 
 const BASE_URL = process.env.BASE_URL;
-
 const args = process.argv.slice(2);
-const projectId = args[0];
+const projectId = args[0]; 
 const branchId = args[1];
 const token = process.env.DIGIA_TOKEN;
 
@@ -47,16 +46,27 @@ function removeNulls(obj) {
   return obj;
 }
 
-function filterObj(item, excludeProjectId) {
-  const keysToRemove = ['id', '_id', 'branchId', 'userId','createdAt','updatedAt'];
+function filterObj(item, excludeProjectId = false) {
+  const keysToRemove = ['id', '_id', 'branchId', 'userId', 'createdAt', 'updatedAt'];
   if (!excludeProjectId) {
     keysToRemove.push('projectId');
   }
-  
-  return Object.fromEntries(
-    Object.entries(item).filter(([key]) => !keysToRemove.includes(key))
-  );
+
+  if (Array.isArray(item)) {
+    return item.map(el => filterObj(el, excludeProjectId));
+  }
+
+  if (item && typeof item === 'object') {
+    return Object.fromEntries(
+      Object.entries(item)
+        .filter(([key]) => !keysToRemove.includes(key))
+        .map(([key, value]) => [key, filterObj(value, excludeProjectId)])
+    );
+  }
+
+  return item; // primitive value
 }
+
 
 function processPages(pages) {
   const pagesDir = path.join(__dirname, '..', 'pages');
@@ -102,8 +112,10 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
   fs.mkdirSync(dirPath, { recursive: true });
 
 
- if (parentFolderName !== "project") {
-    data = removeIds(data);
+if (parentFolderName !== "project") {
+  data = removeIds(data);
+  console.log("Data object:", JSON.stringify(data, null, 2));
+
   } else {
     data = removeIds(data, true); 
   }
@@ -190,7 +202,6 @@ async function fetchAllData() {
 
 
     const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs } = response.data.data.response;
-    console.log(JSON.stringify(pages, null, 2));
 
 
     processAndSaveData('datasources', 'rest', datasources);
@@ -209,9 +220,9 @@ async function fetchAllData() {
     processAndSaveData('design', 'app-state', appState);
     }
     if(filteredAppAsset)
-      {
+    {
       processAndSaveData('design', 'app-assets', filteredAppAsset);
-      }
+    }
 
     console.log(`Data for project ID ${projectId} has been fetched and saved.`);
   } catch (error) {
