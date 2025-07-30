@@ -46,27 +46,16 @@ function removeNulls(obj) {
   return obj;
 }
 
-function filterObj(item, excludeProjectId = false) {
-  const keysToRemove = ['id', '_id', 'branchId', 'userId', 'createdAt', 'updatedAt'];
+function filterObj(item, excludeProjectId) {
+  const keysToRemove = ['id', '_id', 'branchId', 'userId','createdAt','updatedAt'];
   if (!excludeProjectId) {
     keysToRemove.push('projectId');
   }
 
-  if (Array.isArray(item)) {
-    return item.map(el => filterObj(el, excludeProjectId));
-  }
-
-  if (item && typeof item === 'object') {
-    return Object.fromEntries(
-      Object.entries(item)
-        .filter(([key]) => !keysToRemove.includes(key))
-        .map(([key, value]) => [key, filterObj(value, excludeProjectId)])
-    );
-  }
-
-  return item; // primitive value
+  return Object.fromEntries(
+    Object.entries(item).filter(([key]) => !keysToRemove.includes(key))
+  );
 }
-
 
 function processPages(pages) {
   const pagesDir = path.join(__dirname, '..', 'pages');
@@ -114,7 +103,6 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
 
 if (parentFolderName !== "project") {
   data = removeIds(data);
-  console.log("Data object:", JSON.stringify(data, null, 2));
 
   } else {
     data = removeIds(data, true); 
@@ -206,7 +194,7 @@ async function fetchAllData() {
 
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
-    processAndSaveData('components', '', components);
+    processAndSaveData('components', '', removeNulls(components));
     processAndSaveData('functions', '', functions);
     processPages(removeNulls(pages));
 
