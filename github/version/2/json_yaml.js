@@ -6,9 +6,8 @@ const { parseArgs } = require('util');
 
 
 const BASE_URL = process.env.BASE_URL;
-
 const args = process.argv.slice(2);
-const projectId = args[0];
+const projectId = args[0]; 
 const branchId = args[1];
 const token = process.env.DIGIA_TOKEN;
 
@@ -52,7 +51,7 @@ function filterObj(item, excludeProjectId) {
   if (!excludeProjectId) {
     keysToRemove.push('projectId');
   }
-  
+
   return Object.fromEntries(
     Object.entries(item).filter(([key]) => !keysToRemove.includes(key))
   );
@@ -110,8 +109,9 @@ function processAndSaveData(parentFolderName, folderName, data, fileName = 'defa
   fs.mkdirSync(dirPath, { recursive: true });
 
 
- if (parentFolderName !== "project") {
-    data = removeIds(data);
+if (parentFolderName !== "project") {
+  data = removeIds(data);
+
   } else {
     data = removeIds(data, true); 
   }
@@ -201,7 +201,7 @@ async function fetchAllData() {
 
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
-    processAndSaveData('components', '', components);
+    processAndSaveData('components', '', removeNulls(components));
     processAndSaveData('functions', '', functions);
     processPages(removeNulls(pages));
 
@@ -215,9 +215,9 @@ async function fetchAllData() {
     processAndSaveData('design', 'app-state', appState);
     }
     if(filteredAppAsset)
-      {
+    {
       processAndSaveData('design', 'app-assets', filteredAppAsset);
-      }
+    }
 
     console.log(`Data for project ID ${projectId} has been fetched and saved.`);
   } catch (error) {
