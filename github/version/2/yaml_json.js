@@ -5,12 +5,14 @@ const path = require('path');
 const { json } = require('stream/consumers');
 
 
+
 const BASE_URL = process.env.BASE_URL;
 const args = process.argv.slice(2); 
 const token = process.env.DIGIA_TOKEN;
 
 let projectId;
 let branchName = args[0];
+
 
 function readYamlFile(filePath) {
   try {
@@ -110,6 +112,7 @@ async function collectAllData() {
     { folderPath: path.join(__dirname, '..', 'design','app-settings'), folderName: 'appSettings' },
     { folderPath: path.join(__dirname, '..', 'design','app-state'), folderName: 'appState' },
     { folderPath: path.join(__dirname, '..', 'design','app-assets'), folderName: 'appAssets' },
+    { folderPath: path.join(__dirname, '..', 'widgets'), folderName: 'widgets' },
     { folderPath: path.join(__dirname, '..', 'functions'), folderName: 'functions' },
   ];
 
