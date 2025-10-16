@@ -5,12 +5,12 @@ const path = require('path');
 const { parseArgs } = require('util');
 
 
+
 const BASE_URL = process.env.BASE_URL;
 const args = process.argv.slice(2);
 const projectId = args[0]; 
 const branchId = args[1];
 const token = process.env.DIGIA_TOKEN;
-
 
 if (!projectId) {
   console.error('Please provide a projectId.');
@@ -175,7 +175,7 @@ if (parentFolderName !== "project") {
 }
 
 async function fetchAllData() {
-  deleteFolders(['datasources', 'components', 'design', 'functions', 'pages', 'project']);
+  deleteFolders(['datasources', 'components', 'design', 'functions', 'pages', 'project','widgets']);
 
   try {
     
@@ -197,7 +197,7 @@ async function fetchAllData() {
     }
 
 
-    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs } = response.data.data.response;
+    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs ,widgets} = response.data.data.response;
 
     processAndSaveData('datasources', 'rest', datasources);
     processAndSaveData('datasources', 'environment', envs);
@@ -218,6 +218,7 @@ async function fetchAllData() {
     {
       processAndSaveData('design', 'app-assets', filteredAppAsset);
     }
+    processAndSaveData('widgets','',widgets)
 
     console.log(`Data for project ID ${projectId} has been fetched and saved.`);
   } catch (error) {
