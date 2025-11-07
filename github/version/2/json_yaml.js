@@ -197,17 +197,17 @@ async function fetchAllData() {
     }
 
 
-    const { datasources, components, functions, pages, project, typoGraphy, themeData, appState, filteredAppAsset,appSettings, envs ,widgets} = response.data.data.response;
+    const { datasources, components, functions, pages, project, typography, themeData, appState, filteredAppAsset,appSettings, environments ,widgets} = response.data.data.response;
 
     processAndSaveData('datasources', 'rest', datasources);
-    processAndSaveData('datasources', 'environment', envs);
+    processAndSaveData('datasources', 'environment', environments);
     processAndSaveData('components', '', removeNulls(components));
     processAndSaveData('functions', '', functions);
     processPages(removeNulls(pages));
 
 
     processAndSaveData('project', '', project);
-    processAndSaveData('design', 'font-tokens', typoGraphy);
+    processAndSaveData('design', 'font-tokens', typography);
     processAndSaveData('design', 'color-tokens', themeData);
     processAndSaveData('design', 'app-settings', appSettings);
     if(appState)
