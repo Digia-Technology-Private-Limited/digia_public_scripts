@@ -5,12 +5,11 @@ const path = require('path');
 const { parseArgs } = require('util');
 
 
-
 const BASE_URL = process.env.BASE_URL;
 const args = process.argv.slice(2);
 const projectId = args[0]; 
 const branchId = args[1];
-const token = process.env.DIGIA_TOKEN;
+
 
 if (!projectId) {
   console.error('Please provide a projectId.');
