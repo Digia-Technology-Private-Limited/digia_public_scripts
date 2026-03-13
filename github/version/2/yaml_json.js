@@ -2,11 +2,6 @@ const axios = require('axios');
 const fs = require('fs');
 const yaml = require('js-yaml');
 const path = require('path');
-const { json } = require('stream/consumers');
-
-
-
-
 const BASE_URL = process.env.BASE_URL;
 const args = process.argv.slice(2); 
 const token = process.env.DIGIA_TOKEN;
@@ -50,8 +45,9 @@ async function collectDataFromPages(pagesPath) {
       page.layout.nodes = {};
 
       for (const nodeFile of nodeFiles) {
-        const nodeId = nodeFile.split("_").slice(-1)[0].replace('.yaml', '');
         const nodeData = readYamlFile(path.join(nodesPath, nodeFile));
+        const nodeIdFromFile = path.parse(nodeFile).name;
+        const nodeId = nodeData?.id || nodeIdFromFile;
         page.layout.nodes[nodeId] = nodeData;
       }
     }
